@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<script src="~/Scripts/angular.min.js"></script>
+<script src="~/Scripts/PageSpecific/index.js"></script>
+<link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+
+<div ng-app="PersonApp" class="container">
+    <br />
+    <br />
+    <input type="text" placeholder="Search Person" ng-model="searchPerson" />
+    <br />
+    <br />
+    <div ng-controller="PersonController">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th ng-click="sortData('Id')">
+                        ID <div ng-class="getSortClass('Id')"></div>
+                    </th>
+                    <th ng-click="sortData('firstName')">
+                    First Name <div ng-class="getSortClass('firstName')"></div>
+                    </th>
+                    <th ng-click="sortData('lastName')">
+                    Last Name <div ng-class="getSortClass('lastName')"></div>
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tr ng-repeat="r in persons | orderBy: sortColumn:reverseSort | filter : searchPerson">
+                <td>{{r.Id}}</td>
+                <td>{{r.firstName}}</td>
+                <td>{{r.lastName}}</td>
+                <td><a href=""><span class="fa fa-pencil-square-o"></span></a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<style>
+    /*This class displays the UP arrow*/
+.arrow-up {
+     width: 0; 
+     height: 0; 
+     border-left: 5px solid transparent;
+     border-right: 5px solid transparent;
+     border-bottom: 10px solid black;
+     display:inline-block;
+}
+
+/*This class displays the DOWN arrow*/
+.arrow-down {
+     width: 0; 
+     height: 0; 
+     border-left: 5px solid transparent;
+     border-right: 5px solid transparent;
+     border-top: 10px solid black;
+     display:inline-block;
+}
+</style>

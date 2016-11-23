@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Dapper;
+using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
 using Database.DTO;
@@ -20,14 +21,14 @@ namespace AngularMvc.Repository
         }
 
         //To view employee details with generic list       
-        public List<DTOPersonList> GetAllPersons()
+        public List<DTOPerson> GetAllPersons()
         {
             try
             {
                 connection();
                 con.Open();
                 string sqlString = "SELECT [id], [firstname], [lastname] FROM [persons]";
-                IList<DTOPersonList> personList = SqlMapper.Query<DTOPersonList>(
+                IList<DTOPerson> personList = SqlMapper.Query<DTOPerson>(
                                       con, sqlString).ToList();
                 con.Close();
                 return personList.ToList();
@@ -36,6 +37,25 @@ namespace AngularMvc.Repository
             {
                 throw;
             }
+        }
+
+        public bool UpdatePerson(DTOPerson person)
+        {
+            connection();
+            con.Open();
+            var sqlString =
+            "UPDATE [Tutorial].[dbo].[persons] " +
+            "SET firstname = @firstName, " +
+            " lastname = @LastName " +
+            "WHERE id = @Id";
+            con.Execute(sqlString, new
+            {
+                person.Id,
+                person.firstName,
+                person.lastName
+            });
+            //con.Close();
+            return true;
         }
     }
 }

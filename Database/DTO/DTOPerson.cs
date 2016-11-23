@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Database.DTO
 {
-    public class DTOPersonList
+    public class DTOPerson
     {
         public int Id { get; set; }
         public string firstName { get; set; }

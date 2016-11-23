@@ -70,7 +70,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AngularMvcModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="DTO\DTOPersonList.cs" />
+    <Compile Include="DTO\DTOPerson.cs" />
     <Compile Include="person.cs">
       <DependentUpon>AngularMvcModel.tt</DependentUpon>
     </Compile>

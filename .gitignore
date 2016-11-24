@@ -273,15 +273,3 @@ __pycache__/
 
 # Cake - Uncomment if you are using it
 # tools/
-*.suo
-.vs/AngularMvc/v14/.suo
-*.pdb
-bin/AngularMvc.pdb
-bin/AngularMvc.dll
-Database/bin/Debug/Database.pdb
-bin/AngularMvc.pdb
-Database/obj/Debug/Database.dll
-obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
-obj/Debug/AngularMvc.csproj.FileListAbsolute.txt
-obj/Debug/AngularMvc.csprojResolveAssemblyReference.cache
-obj/Debug/AngularMvc.dll

@@ -38,24 +38,32 @@ namespace AngularMvc.Repository
                 throw;
             }
         }
+        
 
-        public bool UpdatePerson(DTOPerson person)
+        public DTOPerson UpsertPerson(DTOPerson person)
         {
             connection();
             con.Open();
-            var sqlString =
-            "UPDATE [Tutorial].[dbo].[persons] " +
-            "SET firstname = @firstName, " +
-            " lastname = @LastName " +
-            "WHERE id = @Id";
-            con.Execute(sqlString, new
+            var sqlString = (person.Id > 0) ?
+                "UPDATE [Tutorial].[dbo].[persons] " +
+                "SET firstname = @firstName, " +
+                " lastname = @LastName " +
+                "WHERE id = @Id" :
+                "INSERT INTO [Tutorial].[dbo].[persons] " +
+                "(firstName, lastName) " +
+                "VALUES(@firstName, @lastName); " +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
+            if (person.Id > 0)
             {
-                person.Id,
-                person.firstName,
-                person.lastName
-            });
-            //con.Close();
-            return true;
+                con.Execute(sqlString, person);
+            }
+            else
+            {
+                var personId = SqlMapper.Query<int>(con, sqlString, person).Single();
+                person.Id = personId;
+            }
+
+            return person;
         }
     }
 }

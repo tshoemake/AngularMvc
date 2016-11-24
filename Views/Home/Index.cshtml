@@ -13,11 +13,11 @@
 <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
 
 <div ng-app="PersonApp" class="container">
-    <div class="mb10 mt15">
-        <input type="text" placeholder="Search Person" ng-model="searchPerson" />
-        <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal" >Add New</button>
-    </div>
     <div ng-controller="PersonController">
+        <div class="mb10 mt15">
+            <input type="text" placeholder="Search Person" ng-model="searchPerson" />
+            <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal" ng-model="addPersonModel" ng-click="addPerson()">Add New</button>
+        </div>
         <div class="scrollable">
             <table class="table">
                 <thead>
@@ -38,7 +38,7 @@
                     <td>{{person.Id}}</td>
                     <td>{{person.firstName}}</td>
                     <td>{{person.lastName}}</td>
-                    <td><a href="" data-toggle="modal" data-target="#myModal" ng-click="editPerson(person)"><span class="fa fa-pencil-square-o"></span></a></td>
+                    <td><a href="" data-toggle="modal" data-target="#myModal" ng-model="editPersonModel" ng-click="editPerson(person)"><span class="fa fa-pencil-square-o"></span></a></td>
                 </tr>
             </table>
         </div>
@@ -50,12 +50,13 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 class="modal-title" id="myModalLabel">Edit Person</h4>
+                        <h4 class="modal-title" id="myModalLabel">{{(editPersonModel.Id != null)  ? "Edit Person" : "Add Person"}}</h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-4 mb10">
-                                @Html.Label("First Name") <input type="text" ng-model="modalPerson.firstName" value="{{modalPerson.firstName}}" />
+                                {{editPersonModel.Id}}
+                                @Html.Label("First Name") <input type="text" ng-model="editPersonModel.firstName" value="{{editPersonModel.firstName}}" />
                             </div>
                             <div>
 
@@ -63,13 +64,13 @@
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-                                @Html.Label("Last Name") <input type="text" ng-model="modalPerson.lastName" value="{{modalPerson.lastName}}" />
+                                @Html.Label("Last Name") <input type="text" ng-model="editPersonModel.lastName" value="{{editPersonModel.lastName}}" />
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" ng-click="updatePerson(modalPerson)">Save changes</button>
+                        <button type="button" class="btn btn-primary" ng-click="upsertPerson(editPersonModel)">Save changes</button>
                     </div>
                 </div>
             </div>

@@ -25,11 +25,11 @@ namespace AngularMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdatePerson(int id, DTOPerson person)
+        public JsonResult UpsertPerson(DTOPerson person)
         {
-            person.Id = id;
-            PersonRepository.UpdatePerson(person);
-            return RedirectToAction("Index");
+            //return Json(new { Id = 0, firstName = "", lastName = "" });
+            var result = PersonRepository.UpsertPerson(person);
+            return Json(result);
         }
 
         [HttpGet]

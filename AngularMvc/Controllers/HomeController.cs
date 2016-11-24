@@ -25,11 +25,12 @@ namespace AngularMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdatePerson(int id, DTOPerson person)
+        public JsonResult UpsertPerson(DTOPerson person)
         {
-            person.Id = id;
-            PersonRepository.UpdatePerson(person);
-            return RedirectToAction("Index");
+            //return Json(new { Id = 0, firstName = "", lastName = "" });
+            var result = PersonRepository.UpsertPerson(person);
+            formatDate(result.birthDate);
+            return Json(result);
         }
 
         [HttpGet]
@@ -40,9 +41,18 @@ namespace AngularMvc.Controllers
             //return Json(result, JsonRequestBehavior.AllowGet);
 
             var result = PersonRepository.GetAllPersons();
-
+            foreach (var person in result)
+            {
+                formatDate(person.birthDate);
+            }
+            
             return Json(result, JsonRequestBehavior.AllowGet);
 
+        }
+
+        private DateTime formatDate (DateTime date)
+        {
+            return Convert.ToDateTime(date.ToString("MM/dd/yyyy"));
         }
     }
 }

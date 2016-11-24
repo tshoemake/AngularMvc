@@ -11,15 +11,17 @@
 <script src="~/Scripts/angular.min.js"></script>
 <script src="~/Scripts/PageSpecific/index.js"></script>
 <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+<script src="~/Scripts/PageSpecific/indexjs.js"></script>
 
 <div ng-app="PersonApp" class="container">
-    <div class="mb10 mt15">
-        <input type="text" placeholder="Search Person" ng-model="searchPerson" />
-        <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal" >Add New</button>
-    </div>
     <div ng-controller="PersonController">
-        <div class="scrollable">
-            <table class="table">
+        <div class="mb10 mt15">
+            <input type="text" placeholder="Search Person" ng-model="searchPerson" />
+            <button type="button" class="btn btn-primary pull-right mb15" data-toggle="modal" data-target="#myModal" ng-model="addPersonModel" ng-click="addPerson()">Add New</button>
+        </div>
+
+        <div class="panel panel-default">
+            <table class="table fixed_headers">
                 <thead>
                     <tr>
                         <th ng-click="sortData('Id')">
@@ -34,42 +36,45 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tr ng-repeat="person in persons | orderBy: sortColumn:reverseSort | filter : searchPerson">
+                <tr class="left-align" ng-repeat="person in persons | orderBy: sortColumn:reverseSort | filter : searchPerson">
                     <td>{{person.Id}}</td>
                     <td>{{person.firstName}}</td>
                     <td>{{person.lastName}}</td>
-                    <td><a href="" data-toggle="modal" data-target="#myModal" ng-click="editPerson(person)"><span class="fa fa-pencil-square-o"></span></a></td>
+                    <td>{{person.birthDate | date:"MM/dd/yyyy"}}</td>
+                    <td><a href="" data-toggle="modal" data-target="#myModal" ng-model="editPersonModel" ng-click="editPerson(person)"><span class="fa fa-pencil-square-o"></span></a></td>
                 </tr>
             </table>
         </div>
 
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-model="modalModel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 class="modal-title" id="myModalLabel">Edit Person</h4>
+                        <h4 class="modal-title" id="myModalLabel">{{(modalModel.Id != 0)  ? "Edit Person" : "Add Person"}}</h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-4 mb10">
-                                @Html.Label("First Name") <input type="text" ng-model="modalPerson.firstName" value="{{modalPerson.firstName}}" />
-                            </div>
-                            <div>
-
+                                @Html.Label("First Name") <input type="text" ng-model="modalModel.firstName" value="{{modalModel.firstName}}" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-                                @Html.Label("Last Name") <input type="text" ng-model="modalPerson.lastName" value="{{modalPerson.lastName}}" />
+                                @Html.Label("Last Name") <input type="text" ng-model="modalModel.lastName" value="{{modalModel.lastName}}" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.Label("BirthDate") <input id="datepicker" type="text" ng-model="modalModel.birthDate" value="{{modalModel.birthDate}}" />
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" ng-click="updatePerson(modalPerson)">Save changes</button>
+                        <button type="button" class="btn btn-primary" ng-click="upsertPerson(modalModel)">Save changes</button>
                     </div>
                 </div>
             </div>
@@ -110,4 +115,50 @@
         height: 500px;
         overflow: auto;
     }
+
+    tr:hover td {
+        background-color: #428bca;
+        color: white;
+    }
+
+    tr:hover span.fa {
+        color: white;
+    }
+
+    .left-align > td {
+        text-align: left;
+    }
+
+    .fixed_headers {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+        .fixed_headers th {
+            text-decoration: underline;
+        }
+
+        .fixed_headers th, td {
+            padding: 20px;
+            text-align: left;
+            width: 2000px;
+        }
+
+        /*.fixed_headers td:nth-child(1), th:nth-child(1) { min-width: 391px; }
+    .fixed_headers td:nth-child(2), th:nth-child(2) { min-width: 379px; }
+    .fixed_headers td:nth-child(3), th:nth-child(3) { width: 367px; }*/
+
+        .fixed_headers thead tr {
+            display: inline-block;
+            position: relative;
+            background-color: #D4D4D4;
+        }
+
+        .fixed_headers tbody {
+            display: block;
+            overflow: auto;
+            width: 100%;
+            max-height: 650px;
+        }
 </style>

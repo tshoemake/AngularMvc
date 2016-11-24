@@ -27,7 +27,7 @@ namespace AngularMvc.Repository
             {
                 connection();
                 con.Open();
-                string sqlString = "SELECT [id], [firstname], [lastname] FROM [persons]";
+                string sqlString = "SELECT [id], [firstname], [lastname], [birthdate] FROM [persons]";
                 IList<DTOPerson> personList = SqlMapper.Query<DTOPerson>(
                                       con, sqlString).ToList();
                 con.Close();
@@ -38,24 +38,33 @@ namespace AngularMvc.Repository
                 throw;
             }
         }
+        
 
-        public bool UpdatePerson(DTOPerson person)
+        public DTOPerson UpsertPerson(DTOPerson person)
         {
             connection();
             con.Open();
-            var sqlString =
-            "UPDATE [Tutorial].[dbo].[persons] " +
-            "SET firstname = @firstName, " +
-            " lastname = @LastName " +
-            "WHERE id = @Id";
-            con.Execute(sqlString, new
+            var sqlString = (person.Id > 0) ?
+                "UPDATE [Tutorial].[dbo].[persons] " +
+                "SET firstname = @firstName, " +
+                " lastname = @LastName, " +
+                " birthdate = @birthDate " +
+                "WHERE id = @Id" :
+                "INSERT INTO [Tutorial].[dbo].[persons] " +
+                "(firstName, lastName, birthDate) " +
+                "VALUES(@firstName, @lastName, @birthDate); " +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
+            if (person.Id > 0)
             {
-                person.Id,
-                person.firstName,
-                person.lastName
-            });
-            //con.Close();
-            return true;
+                con.Execute(sqlString, person);
+            }
+            else
+            {
+                var personId = SqlMapper.Query<int>(con, sqlString, person).Single();
+                person.Id = personId;
+            }
+
+            return person;
         }
     }
 }

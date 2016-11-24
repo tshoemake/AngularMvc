@@ -1,13 +1,18 @@
 ﻿/// <reference path="angular.min.js" />
 var PersonApp = angular.module('PersonApp', []);
-PersonApp.controller('PersonController', function ($scope, PersonDataFactory) {
+PersonApp.controller('PersonController', function ($scope, PersonDataFactory, $filter) {
 
     getPersons();
 
+
     function getPersons() {
         PersonDataFactory.getPersons()
-            .success(function (person) {
-                $scope.persons = person;
+            .success(function (personList) {
+                $scope.persons = personList;
+                for (var i = 0; i < $scope.persons.length; i++) {
+                    var value = formatDate($scope.persons[i].birthDate);
+                    $scope.persons[i].birthDate = $filter('date')(value, 'MM/dd/yyyy');
+                }
             })
             .error(function (error) {
                 $scope.status = 'Unable to load person data: ' + error.message;
@@ -32,25 +37,32 @@ PersonApp.controller('PersonController', function ($scope, PersonDataFactory) {
     }
 
     $scope.addPerson = function () {
-        $scope.editPersonModel = {
+        $scope.modalModel = {
             Id: 0,
             firstName: '',
-            lastName: ''
+            lastName: '',
+            birthDate: ''
         };
     }
 
     $scope.editPerson = function (person) {
-        $scope.editPersonModel = person;
+        $scope.modalModel = person;
     }
 
     $scope.upsertPerson = function (personDetails) {
 
         //insert
         if (personDetails.Id == 0) {
-        var dataObj = { Id: 0, firstName: personDetails.firstName, lastName: personDetails.lastName };
+            var dataObj = {
+                Id: 0,
+                firstName: personDetails.firstName,
+                lastName: personDetails.lastName,
+                birthDate: personDetails.birthDate
+            };
             PersonDataFactory.upsertPerson(dataObj)
            .success(function (dataObj) {
-                   $scope.persons.push(dataObj);
+               dataObj.birthDate = formatDate(dataObj.birthDate);
+               $scope.persons.push(dataObj);
                angular.element('#myModal').modal('hide');
            })
            .error(function (error) {
@@ -72,6 +84,10 @@ PersonApp.controller('PersonController', function ($scope, PersonDataFactory) {
         }
     }
 
+    function formatDate(date) {
+        return new Date(parseInt(date.replace("/Date(", "").replace(")/", ""), 10));
+    }
+
 });
 
 PersonApp.factory('PersonDataFactory', ['$http', function ($http) {
@@ -88,5 +104,7 @@ PersonApp.factory('PersonDataFactory', ['$http', function ($http) {
     return PersonDataFactory;
 
 }]);
+
+
 
 

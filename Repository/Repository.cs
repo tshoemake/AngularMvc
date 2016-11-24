@@ -27,7 +27,7 @@ namespace AngularMvc.Repository
             {
                 connection();
                 con.Open();
-                string sqlString = "SELECT [id], [firstname], [lastname] FROM [persons]";
+                string sqlString = "SELECT [id], [firstname], [lastname], [birthdate] FROM [persons]";
                 IList<DTOPerson> personList = SqlMapper.Query<DTOPerson>(
                                       con, sqlString).ToList();
                 con.Close();
@@ -47,11 +47,12 @@ namespace AngularMvc.Repository
             var sqlString = (person.Id > 0) ?
                 "UPDATE [Tutorial].[dbo].[persons] " +
                 "SET firstname = @firstName, " +
-                " lastname = @LastName " +
+                " lastname = @LastName, " +
+                " birthdate = @birthDate " +
                 "WHERE id = @Id" :
                 "INSERT INTO [Tutorial].[dbo].[persons] " +
-                "(firstName, lastName) " +
-                "VALUES(@firstName, @lastName); " +
+                "(firstName, lastName, birthDate) " +
+                "VALUES(@firstName, @lastName, @birthDate); " +
                 "SELECT CAST(SCOPE_IDENTITY() as int)";
             if (person.Id > 0)
             {

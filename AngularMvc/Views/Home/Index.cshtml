@@ -1,27 +1,32 @@
-﻿@{
+﻿@model IEnumerable<Database.DTO.DTOPerson>
+
+@{
     ViewBag.Title = "Home Page";
 }
 
-<script src="~/Scripts/jquery-1.12.4.min.js"></script>
 <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
 <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
 <script src="~/Scripts/bootstrap.min.js"></script>
 <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
-
 <script src="~/Scripts/angular.min.js"></script>
-<script src="~/Scripts/PageSpecific/index.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js"></script>
+<script src="~/Scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
+<link href="~/Content/ui-bootstrap-csp.css" rel="stylesheet" />
+<script src="~/Scripts/PageSpecific/angularCode.js"></script>
 <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-<script src="~/Scripts/PageSpecific/indexjs.js"></script>
+<script src="~/Scripts/PageSpecific/Index.js"></script>
 
 <div ng-app="PersonApp" class="container">
     <div ng-controller="PersonController">
-        <div class="mb10 mt15">
+        <div class="mb20 mt15">
             <input type="text" placeholder="Search Person" ng-model="searchPerson" />
-            <button type="button" class="btn btn-primary pull-right mb15" data-toggle="modal" data-target="#myModal" ng-model="addPersonModel" ng-click="addPerson()">Add New</button>
+            <button type="button" class="btn btn-primary pull-right mb15" data-toggle="modal" ng-model="addPersonModel" ng-click="addPerson()">Add New</button>
         </div>
 
-        <div class="panel panel-default">
-            <table class="table fixed_headers">
+        <div ng-controller="PaginationDemoCtrl">
+            <table class="table header-fixed">
                 <thead>
                     <tr>
                         <th ng-click="sortData('Id')">
@@ -33,55 +38,30 @@
                         <th ng-click="sortData('lastName')">
                             Last Name <div ng-class="getSortClass('lastName')"></div>
                         </th>
+                        <th ng-click="sortData('birthDate')">
+                            BirthDate <div ng-class="getSortClass('birthDate')"></div>
+                        </th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tr class="left-align" ng-repeat="person in persons | orderBy: sortColumn:reverseSort | filter : searchPerson">
-                    <td>{{person.Id}}</td>
-                    <td>{{person.firstName}}</td>
-                    <td>{{person.lastName}}</td>
-                    <td>{{person.birthDate | date:"MM/dd/yyyy"}}</td>
-                    <td><a href="" data-toggle="modal" data-target="#myModal" ng-model="editPersonModel" ng-click="editPerson(person)"><span class="fa fa-pencil-square-o"></span></a></td>
-                </tr>
+                <tbody>
+                    <tr ng-repeat="person in filteredPersons | orderBy: sortColumn:reverseSort | filter : searchPerson">
+                        <td>{{person.Id}}</td>
+                        <td>{{person.firstName}}</td>
+                        <td>{{person.lastName}}</td>
+                        <td>{{person.birthDate | date:"MM/dd/yyyy"}}</td>
+                        <td>
+                            <a href="" data-toggle="icon-tooltip" data-placement="bottom" title="Edit Record" ng-model="editPersonModel" ng-click="editPerson(person)"><span class="fa fa-pencil-square-o"></span></a>
+                            <a href="" data-toggle="icon-tooltip" data-placement="bottom" title="Remove Record" ng-model="removePersonModel" ng-click="removePersonDialog(person)"><span class="fa fa-remove"></span></a>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
-        </div>
-
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-model="modalModel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title" id="myModalLabel">{{(modalModel.Id != 0)  ? "Edit Person" : "Add Person"}}</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-4 mb10">
-                                @Html.Label("First Name") <input type="text" ng-model="modalModel.firstName" value="{{modalModel.firstName}}" />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                @Html.Label("Last Name") <input type="text" ng-model="modalModel.lastName" value="{{modalModel.lastName}}" />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                @Html.Label("BirthDate") <input id="datepicker" type="text" ng-model="modalModel.birthDate" value="{{modalModel.birthDate}}" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" ng-click="upsertPerson(modalModel)">Save changes</button>
-                    </div>
-                </div>
-            </div>
+            <ul uib-pagination total-items="persons.length" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" items-per-page="numPerPage" num-pages="numPages"></ul>
+            <pre>Page: {{currentPage}} / {{numPages}}</pre>
         </div>
     </div>
 </div>
-
 <style>
     /*This class displays the UP arrow*/
     .arrow-up {
@@ -103,8 +83,8 @@
         display: inline-block;
     }
 
-    .mb10 {
-        margin-bottom: 10px;
+    .mb20 {
+        margin-bottom: 20px;
     }
 
     .mt15 {
@@ -129,36 +109,41 @@
         text-align: left;
     }
 
-    .fixed_headers {
+    .header-fixed {
         width: 100%;
-        table-layout: fixed;
-        border-collapse: collapse;
     }
 
-        .fixed_headers th {
-            text-decoration: underline;
-        }
-
-        .fixed_headers th, td {
-            padding: 20px;
-            text-align: left;
-            width: 2000px;
-        }
-
-        /*.fixed_headers td:nth-child(1), th:nth-child(1) { min-width: 391px; }
-    .fixed_headers td:nth-child(2), th:nth-child(2) { min-width: 379px; }
-    .fixed_headers td:nth-child(3), th:nth-child(3) { width: 367px; }*/
-
-        .fixed_headers thead tr {
-            display: inline-block;
-            position: relative;
-            background-color: #D4D4D4;
-        }
-
-        .fixed_headers tbody {
+        .header-fixed > thead,
+        .header-fixed > tbody,
+        .header-fixed > thead > tr,
+        .header-fixed > tbody > tr,
+        .header-fixed > thead > tr > th,
+        .header-fixed > tbody > tr > td {
             display: block;
-            overflow: auto;
-            width: 100%;
-            max-height: 650px;
+        }
+
+            .header-fixed > tbody > tr:after,
+            .header-fixed > thead > tr:after {
+                content: ' ';
+                display: block;
+                visibility: hidden;
+                clear: both;
+            }
+
+        .header-fixed > tbody {
+            overflow-y: auto;
+            height: calc(100% - 37px);
+        }
+
+            .header-fixed > tbody > tr > td,
+            .header-fixed > thead > tr > th {
+                width: 20%; /* 100% / 5(cols) = 20 */
+                max-width: 218px; /* needed to properly line cols (scrollbar in tbody offsets by ~4px */
+                float: left;
+            }
+
+        .header-fixed > thead > tr > th {
+            white-space: nowrap;
+            background-color: #D4D4D4;
         }
 </style>

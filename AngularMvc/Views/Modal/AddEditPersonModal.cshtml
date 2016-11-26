@@ -1,0 +1,37 @@
+﻿@{
+    Layout = null;
+}
+
+<script src="~/Scripts/PageSpecific/AddEditPersonModal.js"></script>
+
+<div ng-controller="ModalController">
+    <div ng-model="modalModel" id="modalDialog">
+        <div class="modal-header">
+            <button type="button" class="close" aria-label="Close" ng-click="close()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">{{(modalModel.Id != 0)  ? "Edit Person" : "Add Person"}}</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-4 mb10">
+                    @Html.Label("First Name") <input type="text" ng-model="modalModel.firstName" value="{{modalModel.firstName}}" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.Label("Last Name") <input type="text" ng-model="modalModel.lastName" value="{{modalModel.lastName}}" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.Label("Birth Date") <input id="datepicker" type="text" ng-model="modalModel.birthDate" value="{{modalModel.birthDate}}" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" ng-click="close()">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="upsertPerson(modalModel)">Save changes</button>
+        </div>
+    </div>
+</div>

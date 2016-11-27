@@ -1,20 +1,20 @@
 ﻿/// <reference path="C:\Users\Tim\Source\Workspaces\AngularMvc\dev\AngularMvc\Views/Modal/AddEditPersonModal.cshtml" />
 /// <reference path="C:\Users\Tim\Source\Workspaces\AngularMvc\dev\AngularMvc\Views/Modal/AddEditPersonModal.cshtml" />
 /// <reference path="angular.min.js" />
-
 angular.module('PersonApp', ['ngAnimate', 'ngSanitize', 'ui.bootstrap']);
-angular.module('PersonApp').controller('PersonController', function ($scope, $uibModal, PersonDataFactory, $filter) {
+angular.module('PersonApp').controller('PersonController', function ($scope, $uibModal, PersonService, $filter) {
 
     getPersonsList();
 
     function getPersonsList() {
-        PersonDataFactory.getPersons()
+        PersonService.getPersons()
             .success(function (personList) {
                 $scope.persons = personList;
                 for (var i = 0; i < $scope.persons.length; i++) {
-                    var value = formatDate($scope.persons[i].birthDate);
-                    $scope.persons[i].birthDate = $filter('date')(value, 'MM/dd/yyyy');
+                    //var value = formatDate($scope.persons[i].birthDate);
+                    $scope.persons[i].birthDate = $filter('date')($scope.persons[i].birthDate, 'MM/dd/yyyy');
                 }
+                paginateGrid();
             })
             .error(function (error) {
                 $scope.status = 'Unable to load person data: ' + error.message;
@@ -53,7 +53,14 @@ angular.module('PersonApp').controller('PersonController', function ($scope, $ui
     }
 
     $scope.editPerson = function (person) {
+        person.birthDate = $filter('date')(person.birthDate, 'MM/dd/yyyy');
         $scope.modalModel = person;
+        $scope.oldValues = {
+            Id: $scope.modalModel.Id,
+            firstName: $scope.modalModel.firstName,
+            lastName: $scope.modalModel.lastName,
+            birthDate: $scope.modalModel.birthDate
+        };
         $scope.$uibModalInstance = $uibModal.open({
             templateUrl: '/Modal/AddEditPersonModal',
             controller: 'ModalController',
@@ -72,13 +79,14 @@ angular.module('PersonApp').controller('PersonController', function ($scope, $ui
 
     $scope.removePerson = function (personDetails) {
         var id = JSON.stringify(personDetails.Id);
-        PersonDataFactory.removePerson(id)
+        PersonService.removePerson(id)
                    .success(function (data) {
                        console.log($scope.persons.length);
                        for (var i = 0; i < $scope.persons.length; i++) {
                            var person = $scope.persons[i];
                            if (person.Id == id) {
                                $scope.persons.splice(i, 1);
+                               paginateGrid();
                                $scope.$uibModalInstance.dismiss('cancel');
                                break;
                            }
@@ -91,7 +99,6 @@ angular.module('PersonApp').controller('PersonController', function ($scope, $ui
     }
 
     $scope.upsertPerson = function (personDetails) {
-        //console.log(personDetails);
         //insert
         if (personDetails.Id == 0) {
             var dataObj = {
@@ -100,10 +107,12 @@ angular.module('PersonApp').controller('PersonController', function ($scope, $ui
                 lastName: personDetails.lastName,
                 birthDate: personDetails.birthDate
             };
-            PersonDataFactory.upsertPerson(dataObj)
+            PersonService.upsertPerson(dataObj)
            .success(function (data) {
+
                data.birthDate = formatDate(data.birthDate);
                $scope.persons.push(data);
+               paginateGrid();
                $scope.$uibModalInstance.dismiss('cancel');
            })
            .error(function (error) {
@@ -114,7 +123,7 @@ angular.module('PersonApp').controller('PersonController', function ($scope, $ui
 
             //update
         else {
-            PersonDataFactory.upsertPerson(personDetails)
+            PersonService.upsertPerson(personDetails)
                 .success(function (data) {
                     $scope.$uibModalInstance.dismiss('cancel');
                 })
@@ -125,73 +134,46 @@ angular.module('PersonApp').controller('PersonController', function ($scope, $ui
         }
     }
 
-
-
-});
-
-angular.module('PersonApp').controller('PaginationDemoCtrl', ['$scope', 'PersonDataFactory', '$filter', function ($scope, PersonDataFactory, $filter) {
-
-    getPersons();
-
-    function getPersons() {
-        PersonDataFactory.getPersons()
-            .success(function (personList) {
-                $scope.persons = personList;
-                for (var i = 0; i < $scope.persons.length; i++) {
-                    var value = formatDate($scope.persons[i].birthDate);
-                    $scope.persons[i].birthDate = $filter('date')(value, 'MM/dd/yyyy');
-                }
-                paginateGrid();
-            })
-            .error(function (error) {
-                $scope.status = 'Unable to load person data: ' + error.message;
-                console.log('error' + $scope.status);
-            });
-    }
-
     $scope.filteredPersons = []
-  , $scope.currentPage = 1
-  , $scope.numPerPage = 15
-  , $scope.maxSize = 5;
+      , $scope.currentPage = 1
+      , $scope.numPerPage = 10
+      , $scope.maxSize = 5;
 
 
     $scope.$watch("currentPage + numPerPage", function () {
+        //paginateGrid();
         if ($scope.persons) {
             paginateGrid();
         }
     });
 
     function paginateGrid() {
-       // $scope.numPages = Math.ceil($scope.persons.length / $scope.numPerPage);
-
         var begin = (($scope.currentPage - 1) * $scope.numPerPage)
                     , end = begin + $scope.numPerPage;
-
-        //console.log($scope.persons);
 
         $scope.filteredPersons = $scope.persons.slice(begin, end);
     }
 
-}]);
+});
 
-angular.module('PersonApp').factory('PersonDataFactory', ['$http', function ($http) {
+angular.module('PersonApp').service('PersonService', ['$http', function ($http) {
 
-    var PersonDataFactory = {};
+    var PersonService = {};
+    var urlBase = 'api/PersonApi/';
 
-    PersonDataFactory.getPersons = function () {
-        return $http.get('/Home/GetPersons');
+    PersonService.getPersons = function () {
+        return $http.get(urlBase);
     };
 
-    PersonDataFactory.upsertPerson = function (person) {
-        return $http.post('/Home/UpsertPerson/', person); //must have ,person !!!!!!!!!!
+    PersonService.upsertPerson = function (person) {
+        return $http.post(urlBase, person); //must have ,person !!!!!!!!!!
     };
 
-    PersonDataFactory.removePerson = function (id) {
-        return $http({ method: 'POST', url: '/Home/RemovePerson', params: { id: id } })
-        //return $http.delete('/Home/RemovePerson/', { id: id });
+    PersonService.removePerson = function (id) {
+        return $http.delete(urlBase + id);
     };
 
-    return PersonDataFactory;
+    return PersonService;
 
 }]);
 
@@ -199,6 +181,16 @@ angular.module('PersonApp').controller('ModalController', ['$scope', function ($
 
     $scope.close = function () {
         $scope.$uibModalInstance.close();
+        var modalId = $scope.modalModel.Id;
+        for (var i = 0; i < $scope.persons.length; i++) {
+            var person = $scope.persons[i];
+            if (person.Id === $scope.oldValues.Id) {
+                $scope.persons[i].firstName = $scope.oldValues.firstName;
+                $scope.persons[i].lastName = $scope.oldValues.lastName;
+                $scope.persons[i].birthDate = $scope.oldValues.birthDate;
+                break;
+            }
+        };
     };
 
     $scope.save = function () {
@@ -209,6 +201,6 @@ angular.module('PersonApp').controller('ModalController', ['$scope', function ($
 
 //Global functions
 function formatDate(date) {
-    return new Date(parseInt(date.replace("/Date(", "").replace(")/", ""), 10));
+    return new Date(date);
 }
 

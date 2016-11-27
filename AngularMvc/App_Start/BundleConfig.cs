@@ -10,7 +10,10 @@ namespace AngularMvc
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
-                        "~/Scripts/jquery-ui-{version}.js"));
+                        "~/Scripts/jquery-ui-{version}.js",
+                        "~/Scripts/angular.js",
+                        "~/Scripts/angular-animate.js",
+                        "~/Scripts/angular-sanitize.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
@@ -22,11 +25,15 @@ namespace AngularMvc
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
-                      "~/Scripts/respond.js"));
+                      "~/Scripts/respond.js",
+                      "~/Scripts/angular-ui/ui-bootstrap-tpls.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/themes/base/jquery-ui.css",
+                      "~/Content/ui-bootstrap-csp.css",
+                      "~/Content/font-awesome.min.css"));
         }
     }
 }

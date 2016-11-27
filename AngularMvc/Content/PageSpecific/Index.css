@@ -1,0 +1,92 @@
+﻿/*This class displays the UP arrow*/
+.arrow-up {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid black;
+    display: inline-block;
+}
+
+/*This class displays the DOWN arrow*/
+.arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 10px solid black;
+    display: inline-block;
+}
+
+.mb20 {
+    margin-bottom: 20px;
+}
+
+.mt15 {
+    margin-top: 15px;
+}
+
+.mr20 {
+    margin-right: 20px;
+}
+
+/*.scrollable {
+        height: 500px;
+        overflow: auto;
+    }*/
+
+tr:hover td {
+    background-color: #428bca;
+    color: white;
+}
+
+tr:hover span.fa {
+    color: white;
+}
+
+.left-align > td {
+    text-align: left;
+}
+
+.table {
+    /*height: 593px; for 15 records */
+    height: 407px;
+}
+
+. .header-fixed {
+    width: 100%;
+}
+
+.header-fixed > thead,
+.header-fixed > tbody,
+.header-fixed > thead > tr,
+.header-fixed > tbody > tr,
+.header-fixed > thead > tr > th,
+.header-fixed > tbody > tr > td {
+    display: block;
+}
+
+    .header-fixed > tbody > tr:after,
+    .header-fixed > thead > tr:after {
+        content: ' ';
+        display: block;
+        visibility: hidden;
+        clear: both;
+    }
+
+.header-fixed > tbody {
+    overflow-y: auto;
+    height: calc(100% - 37px);
+}
+
+    .header-fixed > tbody > tr > td,
+    .header-fixed > thead > tr > th {
+        width: 20%; /* 100% / 5(cols) = 20 */
+        max-width: 218px; /* needed to properly line cols (scrollbar in tbody offsets by ~4px */
+        float: left;
+    }
+
+.header-fixed > thead > tr > th {
+    white-space: nowrap;
+    background-color: #D4D4D4;
+}

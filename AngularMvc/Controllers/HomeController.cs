@@ -19,11 +19,6 @@ namespace AngularMvc.Controllers
             return View();
         }
 
-        public ActionResult AddEditPersonModal()
-        {
-            return View();
-        }
-
         [HttpPost]
         public JsonResult UpsertPerson(DTOPerson person)
         {
@@ -31,6 +26,14 @@ namespace AngularMvc.Controllers
             var result = PersonRepository.UpsertPerson(person);
             formatDate(result.birthDate);
             return Json(result);
+        }
+
+        [HttpPost]
+        //[HttpDelete]
+        public JsonResult RemovePerson(int id)
+        {
+            //PersonRepository.RemovePerson(id);
+            return Json(new { success = true });
         }
 
         [HttpGet]
@@ -45,14 +48,17 @@ namespace AngularMvc.Controllers
             {
                 formatDate(person.birthDate);
             }
-            
+
             return Json(result, JsonRequestBehavior.AllowGet);
 
         }
 
-        private DateTime formatDate (DateTime date)
+
+
+        private DateTime formatDate(DateTime date)
         {
             return Convert.ToDateTime(date.ToString("MM/dd/yyyy"));
         }
+
     }
 }

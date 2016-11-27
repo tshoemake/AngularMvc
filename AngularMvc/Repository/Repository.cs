@@ -38,7 +38,7 @@ namespace AngularMvc.Repository
                 throw;
             }
         }
-        
+
 
         public DTOPerson UpsertPerson(DTOPerson person)
         {
@@ -65,6 +65,23 @@ namespace AngularMvc.Repository
             }
 
             return person;
+        }
+
+        public void RemovePerson(int id)
+        {
+            try
+            {
+                connection();
+                con.Open();
+                var sqlString = ("DELETE FROM [Tutorial].[dbo].[persons] Where id = " + id + "");
+                con.Execute(sqlString);
+                con.Close();
+            }
+            catch
+            {
+                throw;
+            }
+
         }
     }
 }

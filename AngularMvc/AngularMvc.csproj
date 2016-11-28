@@ -259,6 +259,7 @@
     <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\PersonApp\app.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\angular.min.js.map" />
@@ -283,6 +284,10 @@
     <Content Include="Scripts\PageSpecific\filter.js" />
     <Content Include="Scripts\PageSpecific\angularCode.js" />
     <Content Include="Scripts\PageSpecific\Index.js" />
+    <Content Include="Scripts\PersonApp\controllers\personController.js" />
+    <Content Include="Scripts\PersonApp\controllers\personModalController.js" />
+    <Content Include="Scripts\PersonApp\filters\personFilter.js" />
+    <Content Include="Scripts\PersonApp\services\personService.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
@@ -326,6 +331,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="lib\" />
+    <Folder Include="Scripts\PersonApp\directives\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

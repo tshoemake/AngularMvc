@@ -28,6 +28,13 @@ namespace AngularMvc
                       "~/Scripts/respond.js",
                       "~/Scripts/angular-ui/ui-bootstrap-tpls.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/angular").Include(
+                      "~/Scripts/PersonApp/app.js",
+                      "~/Scripts/PersonApp/filters/personFilter.js",
+                      "~/Scripts/PersonApp/services/personService.js",
+                      "~/Scripts/PersonApp/controllers/personModalController.js",
+                      "~/Scripts/PersonApp/controllers/personController.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",

@@ -10,6 +10,7 @@ namespace AngularMvc.Controllers
     {
         public ActionResult Index()
         {
+            @ViewBag.Title = "Person";
             return View();
         }
 

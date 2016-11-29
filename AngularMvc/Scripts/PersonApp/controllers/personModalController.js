@@ -17,4 +17,13 @@
     $scope.save = function () {
         $scope.$uibModalInstance.dismiss('cancel');
     };
+
+    $scope.format = 'MM/dd/yyyy';
+    $scope.open1 = function () {
+        $scope.popup1.opened = true;
+    };
+
+    $scope.popup1 = {
+        opened: false
+    };
 }]);

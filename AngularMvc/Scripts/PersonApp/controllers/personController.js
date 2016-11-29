@@ -50,7 +50,6 @@
     }
 
     $scope.editPerson = function (person) {
-        //person.birthDate = $filter('date')(person.birthDate, 'MM/dd/yyyy');
         person.birthDate = formatDate(person.birthDate);
         $scope.modalModel = person;
         $scope.oldValues = {

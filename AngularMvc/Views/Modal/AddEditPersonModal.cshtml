@@ -15,17 +15,23 @@
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-4 mb10">
-                    @Html.Label("First Name") <input type="text" ng-model="modalModel.firstName"/>
+                    @Html.Label("First Name") <input type="text" class="form-control" placeholder="First Name" ng-model="modalModel.firstName" />
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4">
-                    @Html.Label("Last Name") <input type="text" ng-model="modalModel.lastName"/>
+                <div class="col-md-4 mb10">
+                    @Html.Label("Last Name") <input type="text" class="form-control" placeholder="Last Name" ng-model="modalModel.lastName" />
                 </div>
             </div>
+            @Html.Label("Birth Date")
             <div class="row">
                 <div class="col-md-4">
-                    @Html.Label("Birth Date") <input type="date" ng-model="modalModel.birthDate" />
+                    <p class="input-group">
+                        <input uib-datepicker-popup="{{format}}" class="form-control" is-open="popup1.opened"  close-text="Close" ng-model="modalModel.birthDate" /> 
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -35,3 +41,9 @@
         </div>
     </div>
 </div>
+
+<style>
+    .mb10 {
+        margin-bottom: 10px;
+    }
+</style>

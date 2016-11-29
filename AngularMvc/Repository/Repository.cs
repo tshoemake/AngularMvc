@@ -28,10 +28,9 @@ namespace AngularMvc.Repository
                 connection();
                 con.Open();
                 string sqlString = "SELECT [id], [firstname], [lastname], [birthdate] FROM [persons]";
-                IList<DTOPerson> personList = SqlMapper.Query<DTOPerson>(
-                                      con, sqlString).ToList();
+                var personList = con.Query<DTOPerson>("uspGetAllPersons", commandType: CommandType.StoredProcedure).ToList();
                 con.Close();
-                return personList.ToList();
+                return personList;
             }
             catch (Exception)
             {
@@ -42,29 +41,29 @@ namespace AngularMvc.Repository
 
         public DTOPerson UpsertPerson(DTOPerson person)
         {
-            connection();
-            con.Open();
-            var sqlString = (person.Id > 0) ?
-                "UPDATE [Tutorial].[dbo].[persons] " +
-                "SET firstname = @firstName, " +
-                " lastname = @LastName, " +
-                " birthdate = @birthDate " +
-                "WHERE id = @Id" :
-                "INSERT INTO [Tutorial].[dbo].[persons] " +
-                "(firstName, lastName, birthDate) " +
-                "VALUES(@firstName, @lastName, @birthDate); " +
-                "SELECT CAST(SCOPE_IDENTITY() as int)";
-            if (person.Id > 0)
-            {
-                con.Execute(sqlString, person);
-            }
-            else
-            {
-                var personId = SqlMapper.Query<int>(con, sqlString, person).Single();
-                person.Id = personId;
-            }
+            try {
+                connection();
+                con.Open();
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
+                parameters.Add("@firstName", person.firstName);
+                parameters.Add("@lastName", person.lastName);
+                parameters.Add("@birthDate", person.birthDate);
 
-            return person;
+                con.Execute("uspUpsertPerson", parameters, commandType: CommandType.StoredProcedure);
+
+                int insertedId = parameters.Get<int>("@Id");
+                if (insertedId > 0)
+                {
+                    person.Id = insertedId;
+                }
+
+                return person;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public void RemovePerson(int id)
@@ -73,11 +72,12 @@ namespace AngularMvc.Repository
             {
                 connection();
                 con.Open();
-                var sqlString = ("DELETE FROM [Tutorial].[dbo].[persons] Where id = " + id + "");
-                con.Execute(sqlString);
+                var parameters = new DynamicParameters();
+                parameters.Add("@Id", id);
+                con.Execute("uspRemovePerson", parameters, commandType: CommandType.StoredProcedure);
                 con.Close();
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }

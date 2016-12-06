@@ -1,0 +1,6 @@
+{
+  "name": "Angularmvc",
+  "tagline": "My ng1 twitch project - the latest and greatest",
+  "body": "### Project Info\r\nThis project was created in an attempt to develop projects with technologies not used in my day-to-day work. I made this project while streaming on twitch.tv and gained many views and made lots of new connections as an unintentional, yet delightful result. This project is a small, simple app demonstrating basic AngularJS features including service calls.  It also uses an MVC Web API to handle those service requests and a combination of Dapper/EF6 to grab the data on the backend.  If you have any questions please contact me at one of the following links below!\r\n\r\n### Authors and Contributors\r\n@tshoemake\r\n\r\n### Contact\r\n<https://www.linkedin.com/in/tim-shoemake-12025430>\r\n<https://www.facebook.com/timmyshoe>\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
